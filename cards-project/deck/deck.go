@@ -104,8 +104,6 @@ func (d *Deck) ToArrayOfStrings() []string {
 		arr[i] = fmt.Sprintf("%s of %s", card.value, card.suit)
 	}
 
-	fmt.Printf("Arr %v\n", arr)
-
 	return arr
 }
 
