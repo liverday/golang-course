@@ -10,7 +10,16 @@ import (
 
 var delimiter = ","
 
-type Deck []string
+type Card struct {
+	suit  string
+	value string
+}
+
+func (c *Card) Equal(other Card) bool {
+	return c.suit == other.suit && c.value == other.value
+}
+
+type Deck []*Card
 
 func NewDeck() *Deck {
 	cardSuits := []string{"Spades", "Hearts", "Diamonds", "Clubs"}
@@ -20,11 +29,20 @@ func NewDeck() *Deck {
 
 	for _, suit := range cardSuits {
 		for _, value := range cardValues {
-			*deck = append(*deck, fmt.Sprintf("%s of %s", value, suit))
+			*deck = append(*deck, &Card{
+				suit:  suit,
+				value: value,
+			})
 		}
 	}
 
 	return deck
+}
+
+func getSuitAndValueFromPlainCard(card string) (string, string) {
+	arr := strings.Split(card, " of ")
+
+	return arr[0], arr[1]
 }
 
 func NewDeckFromFile(fileName string) *Deck {
@@ -35,8 +53,20 @@ func NewDeckFromFile(fileName string) *Deck {
 		os.Exit(1)
 	}
 
-	deck := Deck(strings.Split(string(bytes), delimiter))
-	return &deck
+	cardValues := strings.Split(string(bytes), delimiter)
+
+	deck := &Deck{}
+
+	for _, card := range cardValues {
+		suit, value := getSuitAndValueFromPlainCard(card)
+
+		*deck = append(*deck, &Card{
+			suit:  suit,
+			value: value,
+		})
+	}
+
+	return deck
 }
 
 func (d *Deck) Print() {
@@ -67,8 +97,20 @@ func (d *Deck) Shuffle() {
 	}
 }
 
+func (d *Deck) ToArrayOfStrings() []string {
+	arr := make([]string, len(*d))
+
+	for i, card := range *d {
+		arr[i] = fmt.Sprintf("%s of %s", card.value, card.suit)
+	}
+
+	fmt.Printf("Arr %v\n", arr)
+
+	return arr
+}
+
 func (d *Deck) ToString() string {
-	return strings.Join(*d, delimiter)
+	return strings.Join(d.ToArrayOfStrings(), delimiter)
 }
 
 func (d *Deck) SaveToFile(fileName string) error {
