@@ -1,0 +1,7 @@
+https://google.com
+https://amazon.com
+https://mercadolivre.com.br
+https://uber.com
+https://curto.io
+https://golang.org
+https://stackoverflow.com
